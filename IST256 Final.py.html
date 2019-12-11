@@ -1,0 +1,118 @@
+#!/usr/bin/env python
+# coding: utf-8
+
+# In[12]:
+
+
+#PROCESS:
+#3 Methods
+#   Location (Based off ZIP)
+#      Picking store (Store Rating, Hours, Address)
+#   Give choices for Product (In Catergories) [???]
+#      List: Avaliblity (quantity), Price, Warrenty, Pre-owned, Description
+#           (Add additional method for addtional information)
+#   Conclusion (List of prodcuts choosen, Store hours & Address)
+#BB_url_products= 'https://api.bestbuy.com/v1/products'
+BB_url_stores = 'https://api.bestbuy.com/v1/stores'
+#BB_url_catergory = 'https://api.bestbuy.com/v1/categories'
+
+
+# In[11]:
+
+
+get_ipython().system('pip install -q requests')
+get_ipython().system('pip install chart-studio')
+import urllib, base64
+import pandas as pd
+import numpy as np
+import warnings
+warnings.filterwarnings('ignore')
+import requests
+import json
+
+
+# In[51]:
+
+
+option = {'apiKey': 'PO1GPj1c2yOdKQLEdYMfG6P9', 'format' : 'json' }
+#response_prod = requests.get(BB_url_products, params = option)
+
+
+response_store = requests.get(BB_url_stores, params = option)
+print(response_store.url)
+
+#response_cat = requests.get(BB_url_catergory)
+#print(response_cat.url)
+
+
+# In[52]:
+
+
+#print(response_prod.ok)
+#print(response_store.status_code)
+print(response_store.ok)
+#print(response_cat.status_code)
+#print(response_cat.ok)
+#print(type(response_prod))
+print(type(response_store))
+#print(type(response_cat))
+
+#info = response_prod.json()
+store_info = response_store.json()
+#info = response_cat.json()
+#info['products']
+#info['store']
+#info['category']
+
+
+# In[31]:
+
+
+store_info_df
+
+
+# In[47]:
+
+
+
+
+#save page numbers (1,10) in a varible
+#for loop
+#New var (DF) for total pages
+    #append each page to this varible
+beg_page_store = store_info_df['from'][0]+1
+end_page_store = store_info_df['to'][0]+1
+
+store_page_ls = []
+store_page_df = pd.DataFrame()
+
+sort_attr = ''
+#print(beg_page_store)
+#print(end_page_store)
+option = {'apiKey': 'PO1GPj1c2yOdKQLEdYMfG6P9', 'format' : 'json', 'pageSize':10, 'page': 1,'sort' : sort_attr }
+
+#"/v1/products(type=\"Movie\")?show=sku,name,salePrice&format=json&pageSize=3&page=10&apiKey=YourAPIKey"
+
+for i in range(beg_page_store,end_page_store):
+    response_store = requests.get(BB_url_stores, params = option)
+    store_page_ls.append(response_store.json())
+    
+    option['page']=i
+    print(i)
+    
+#store_page_ls
+store_info_df = pd.DataFrame(store_page_ls)
+store_info_df
+
+
+# In[30]:
+
+
+store_info_df.keys
+
+
+# In[ ]:
+
+
+
+
